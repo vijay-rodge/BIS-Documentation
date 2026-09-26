@@ -1,0 +1,33 @@
+---
+title: Evidence Validation & Authority Tiers
+description: Four-tier authority hierarchy, confidence scoring, and evidence verification
+sidebar_position: 6
+---
+
+# Evidence Validation & Authority Tiers
+
+To safeguard against misinformation, the system classifies all retrieved evidence into an immutable **Four-Tier Authority Hierarchy**.
+
+```mermaid
+flowchart TD
+    subgraph Authority Hierarchy
+        T1[Tier 1: Official Gazette & BIS Standards]
+        T2[Tier 2: BIS Web Portals standards.bis.gov.in / manakonline]
+        T3[Tier 3: Other Central Government Ministries]
+        T4[Tier 4: Third-Party & Commercial Compliance Blogs]
+    end
+
+    T1 -->|Full Authority Weight 1.25x| Accept[Approved for Citations]
+    T2 -->|Portal Authority Weight 1.15x| Accept
+    T3 -->|Contextual Weight 1.05x| Review[Secondary Reference]
+    T4 -->|Weight 0.0x - FORBIDDEN| Reject[Strictly Excluded & Dropped]
+```
+
+---
+
+## Authority Tiers & Scoring
+
+- **Tier 1 (Official BIS & Gazette)**: Watermarked standard previews, Gazette of India S.O. notifications. Base weight: `1.25x`.
+- **Tier 2 (Official BIS Portals)**: `manakonline.in`, `standards.bis.gov.in`, `crsbis.in`. Base weight: `1.15x`.
+- **Tier 3 (Government Notifications)**: Line ministry policy circulars (DPIIT, Ministry of Steel). Base weight: `1.05x`.
+- **Tier 4 (Unverified Third-Party)**: Wikipedia, commercial blogs, private lab marketing. **Score: 0.0 — Never accepted.**

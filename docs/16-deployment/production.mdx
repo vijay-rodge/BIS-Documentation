@@ -1,0 +1,30 @@
+---
+title: Production Readiness Checklist
+description: Security hardening, performance tuning, and pre-flight launch verification
+sidebar_position: 5
+---
+
+# Production Readiness Checklist
+
+Before deploying the BIS Intelligent Assistant into live production serving the public, verify this hardening checklist:
+
+```mermaid
+flowchart TD
+    Check[Production Pre-Flight Checklist]
+    Check --> C1[1. Database: PostgreSQL 15+ Cluster with Backups]
+    Check --> C2[2. Secrets: Rotate Admin API Key & Gemini Keys]
+    Check --> C3[3. Network: Restrict CORS to Whitelisted Domains]
+    Check --> C4[4. Concurrency: Gunicorn Multi-Worker Configuration]
+    Check --> C5[5. Monitoring: Health Endpoint & Log Aggregation]
+```
+
+---
+
+## Pre-Flight Checklist Table
+
+- [x] **Database Engine**: Migrated from local SQLite to high-availability PostgreSQL 15+.
+- [x] **Rate Limiting**: SlowAPI enabled with Redis backend to prevent API abuse.
+- [x] **CORS Origins**: Restricted to `https://*.bis.gov.in` and approved government portals.
+- [x] **Zero-Hallucination Safe Fallback**: Verified that Scenario 8 safe refusal passes 100%.
+- [x] **Gunicorn Workers**: Configured with `(2 * vCPU) + 1` worker processes.
+- [x] **HTTPS TLS 1.3**: Automated SSL renewal configured via Let's Encrypt / Certbot.

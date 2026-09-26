@@ -1,0 +1,71 @@
+---
+title: Proposed Solution
+description: Architectural and algorithmic design of the BIS Intelligent Assistant
+sidebar_position: 1
+---
+
+# Proposed Solution
+
+The **BIS Intelligent Assistant** delivers an innovative, multi-layered solution that bridges the divide between complex technical standards documentation and everyday industrial and consumer inquiries.
+
+```mermaid
+flowchart TD
+    subgraph Input Processing
+        Q[User Query] --> QA[Query Understanding & Intent Classifier]
+        QA --> Context[Conversational State & Memory]
+    end
+
+    subgraph Multi-Agent Dispatch
+        Context --> Orch[Master Orchestrator]
+        Orch --> SA[Standard Discovery Agent]
+        Orch --> PA[Product Disambiguation Agent]
+        Orch --> MA[Mandatory Status QCO Agent]
+        Orch --> TA[Testing Requirements Agent]
+        Orch --> LA[Laboratory Locator Agent]
+    end
+
+    subgraph Data & Grounding
+        SA & MA & TA & LA --> Engine[(Authoritative Knowledge Base & Gazette Records)]
+        Engine --> EV[Evidence Validation & Tier-1 Scoring]
+    end
+
+    subgraph Response Generation
+        EV --> GenEngine{Gemini Available?}
+        GenEngine -->|Yes| LLM[Grounded Gemini Synthesis]
+        GenEngine -->|No / 429| Extr[Deterministic Extractive Engine]
+        LLM & Extr --> Final[Structured Response with Citations & Action Buttons]
+    end
+```
+
+---
+
+## Holistic Solution Architecture
+
+The solution synthesizes four core subsystems into a unified platform:
+
+1. **Intent-Driven Natural Language Engine**: Translates natural, non-technical inquiries into formal standardization queries across 16 intent classes.
+2. **Dynamic Ingestion & Expansion Pipeline**: Features an active catalog covering major engineering divisions (CHD, CED, MTD, ETD, LITD) and dynamically registers unseeded standards into SQLite/PostgreSQL upon demand.
+3. **Multi-Agent Regulatory Orchestrator**: Coordinates specialized subagents that independently resolve standards, QCO orders, testing requirements, and lab locations before cross-validating findings.
+4. **Deterministic & Generative Dual Synthesis**: Generates conversational answers using Google Gemini while maintaining a 100% deterministic extractive backup engine that ensures zero downtime during quota exhaustion.
+
+---
+
+## Solving the Hallucination Dilemma
+
+Generic Large Language Models hallucinate standards because they rely on probabilistic token predictions. Our solution introduces a **strict evidence gate**:
+
+```python
+# Conceptual Evidence Validation Gate
+def validate_standard_response(candidate_standards, evidence_chunks):
+    if not candidate_standards:
+        # Strict Safe Refusal - Zero Hallucination
+        return {
+            "answer": "I could not find sufficient authoritative BIS evidence to answer this reliably.",
+            "confidence": "INSUFFICIENT",
+            "sources": []
+        }
+    # Proceed only with verified Tier-1 evidence
+    return format_grounded_response(candidate_standards, evidence_chunks)
+```
+
+

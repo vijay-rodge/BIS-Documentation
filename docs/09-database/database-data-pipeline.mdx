@@ -1,0 +1,408 @@
+---
+title: Database Architecture & Data Ingestion Pipeline
+description: Comprehensive specification of relational schema, pgvector, SQLAlchemy models, Alembic migrations, source discovery, web scraping, PDF parsing, and data validation
+sidebar_position: 1
+---
+
+# Database Architecture & Data Ingestion Pipeline
+
+## Purpose
+The persistence and data ingestion layer of the **BIS Intelligent Assistant** transforms unstructured government gazettes, watermarked preview records, and standards catalogs into high-performance, validated relational knowledge. It guarantees data integrity, sub-millisecond clause lookups, and deterministic citation provenance across PostgreSQL 16 (`pgvector`) and zero-configuration SQLite vector stores.
+
+This consolidated guide details the complete 11-stage persistence and ingestion specification:
+1. **Database Architecture & Entity Relationships**
+2. **PostgreSQL & pgvector Configuration**
+3. **Relational Schema DDL & Constraints**
+4. **SQLAlchemy 2.0 ORM Declarative Models**
+5. **Database Migrations with Alembic**
+6. **Data Ingestion Pipeline Architecture**
+7. **Source Discovery & Government Portal Monitoring**
+8. **Web Scraping & Politeness Protocols**
+9. **PDF Processing & Clause Hierarchy Extraction**
+10. **Metadata Extraction & Normalization**
+11. **Data Validation & Integrity Verification**
+
+---
+
+## 1. Database Architecture & Entity Relationships
+
+The database layer serves as the authoritative persistence repository for all standards metadata, official documents, extracted clauses, Quality Control Orders, product mappings, and accredited testing laboratories:
+
+```mermaid
+erDiagram
+    STANDARDS ||--o{ DOCUMENTS : "has"
+    STANDARDS ||--o{ CLAUSES : "contains"
+    STANDARDS ||--o{ QCOS : "governed by"
+    STANDARDS ||--o{ LABORATORIES : "tested by"
+    STANDARDS ||--o{ STANDARD_PRODUCTS : "maps to"
+    PRODUCTS ||--o{ STANDARD_PRODUCTS : "categorized by"
+    DOCUMENTS ||--o{ CHUNKS : "chunked into"
+    CLAUSES ||--o{ CHUNKS : "referenced by"
+```
+
+### Core Relational Tables
+
+| Table Name | Description | Key Attributes |
+| :--- | :--- | :--- |
+| **`standards`** | Master table storing Indian Standards catalog. | `id`, `standard_number`, `title`, `status`, `edition`, `scope` |
+| **`documents`** | Authoritative document records and preview URLs. | `id`, `standard_id`, `source_url`, `source_tier`, `raw_content` |
+| **`clauses`** | Granular clause-level technical requirements. | `id`, `standard_id`, `clause_number`, `title`, `content`, `page` |
+| **`chunks`** | Extracted knowledge passages with 384-dim embeddings. | `id`, `standard_number`, `clause_number`, `content`, `tier`, `embedding` |
+| **`qcos`** | Quality Control Orders and Gazette notifications. | `id`, `standard_id`, `title`, `notification_no`, `mandatory_status` |
+| **`products`** | Normalized product entities and colloquial synonyms. | `id`, `name`, `category`, `normalized_name`, `synonyms` |
+| **`laboratories`** | BIS and NABL accredited testing facilities. | `id`, `name`, `city`, `state`, `accreditation_number`, `scope` |
+
+---
+
+## 2. PostgreSQL & pgvector Configuration
+
+In production deployments, the system utilizes **PostgreSQL 15+** with the **pgvector** extension for scalable relational querying and vector storage:
+
+```mermaid
+flowchart TD
+    SQL["SQLAlchemy ORM (AsyncSession)"] --> ConnPool["asyncpg Connection Pool: 10-50 connections"]
+    ConnPool --> PG[("PostgreSQL 15+ Engine")]
+    PG --> Tables["Relational Tables: B-Tree Indexes"]
+    PG --> VectorIdx["Vector Storage: HNSW / IVFFlat (vector_cosine_ops)"]
+```
+
+### Extension Installation & Setup
+
+```sql
+-- Enable pgvector extension
+CREATE EXTENSION IF NOT EXISTS vector;
+
+-- Verify extension installation
+SELECT extname, extversion FROM pg_extension WHERE extname = 'vector';
+```
+
+### Database Connection Pooling
+
+```python
+# backend/database/connection.py
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from sqlalchemy.orm import sessionmaker
+
+DATABASE_URL = "postgresql+asyncpg://bis_user:secure_pass@localhost:5432/bis_agent_db"
+
+engine = create_async_engine(
+    DATABASE_URL,
+    pool_size=20,
+    max_overflow=10,
+    pool_pre_ping=True,
+    pool_recycle=3600
+)
+
+AsyncSessionLocal = sessionmaker(
+    bind=engine,
+    class_=AsyncSession,
+    expire_on_commit=False
+)
+```
+
+---
+
+## 3. Relational Schema DDL & Constraints
+
+The relational schema enforces data integrity through foreign keys, uniqueness constraints, and composite indexes:
+
+```sql
+-- Standards Master Table
+CREATE TABLE standards (
+    id SERIAL PRIMARY KEY,
+    standard_number VARCHAR(100) UNIQUE NOT NULL,
+    title VARCHAR(500) NOT NULL,
+    edition VARCHAR(50),
+    publication_year INTEGER,
+    status VARCHAR(50) DEFAULT 'ACTIVE',
+    department VARCHAR(100),
+    committee VARCHAR(100),
+    scope TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Clauses Table
+CREATE TABLE clauses (
+    id SERIAL PRIMARY KEY,
+    standard_id INTEGER REFERENCES standards(id) ON DELETE CASCADE,
+    clause_number VARCHAR(50) NOT NULL,
+    title VARCHAR(300),
+    section VARCHAR(100),
+    content TEXT NOT NULL,
+    page_number INTEGER DEFAULT 1,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT uq_std_clause UNIQUE (standard_id, clause_number)
+);
+
+-- Quality Control Orders Table
+CREATE TABLE qcos (
+    id SERIAL PRIMARY KEY,
+    standard_id INTEGER REFERENCES standards(id) ON DELETE CASCADE,
+    title VARCHAR(300) NOT NULL,
+    notification_number VARCHAR(150),
+    issuing_ministry VARCHAR(200) NOT NULL,
+    mandatory_status VARCHAR(50) DEFAULT 'MANDATORY',
+    gazette_url VARCHAR(500),
+    order_date DATE,
+    effective_date DATE,
+    exemptions TEXT,
+    source_tier INTEGER DEFAULT 1
+);
+
+-- Indexes for Fast Lookup
+CREATE INDEX idx_std_number ON standards(standard_number);
+CREATE INDEX idx_clause_std ON clauses(standard_id);
+CREATE INDEX idx_qco_std ON qcos(standard_id);
+```
+
+---
+
+## 4. SQLAlchemy 2.0 Declarative ORM Models
+
+The backend utilizes **SQLAlchemy 2.0** declarative models with strict type annotations:
+
+```python
+# backend/database/models/standard.py
+from datetime import datetime
+from typing import List, Optional
+from sqlalchemy import String, Integer, Text, ForeignKey, DateTime
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+
+class Base(DeclarativeBase):
+    pass
+
+class Standard(Base):
+    __tablename__ = "standards"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    standard_number: Mapped[str] = mapped_column(String(100), unique=True, index=True)
+    title: Mapped[str] = mapped_column(String(500), nullable=False)
+    edition: Mapped[Optional[str]] = mapped_column(String(50))
+    publication_year: Mapped[Optional[int]] = mapped_column(Integer)
+    status: Mapped[str] = mapped_column(String(50), default="ACTIVE")
+    department: Mapped[Optional[str]] = mapped_column(String(100))
+    committee: Mapped[Optional[str]] = mapped_column(String(100))
+    scope: Mapped[Optional[str]] = mapped_column(Text)
+
+    # Relationships
+    clauses: Mapped[List["Clause"]] = relationship("Clause", back_populates="standard", cascade="all, delete-orphan")
+    qco: Mapped[Optional["QCO"]] = relationship("QCO", back_populates="standard", uselist=False)
+
+class Clause(Base):
+    __tablename__ = "clauses"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    standard_id: Mapped[int] = mapped_column(ForeignKey("standards.id", ondelete="CASCADE"), index=True)
+    clause_number: Mapped[str] = mapped_column(String(50), nullable=False)
+    title: Mapped[Optional[str]] = mapped_column(String(300))
+    content: Mapped[str] = mapped_column(Text, nullable=False)
+    page_number: Mapped[int] = mapped_column(Integer, default=1)
+
+    standard: Mapped["Standard"] = relationship("Standard", back_populates="clauses")
+```
+
+---
+
+## 5. Database Migrations with Alembic
+
+Database schema changes are tracked and deployed across environments using **Alembic**:
+
+```mermaid
+flowchart LR
+    ModelChange["Modify SQLAlchemy Models"] --> GenMigration["alembic revision --autogenerate"]
+    GenMigration --> ReviewScript["Inspect Migration Script"]
+    ReviewScript --> Apply["alembic upgrade head"]
+    Apply --> DB[("PostgreSQL Database Updated")]
+```
+
+### Migration Workflow Commands
+
+```bash
+# Generate a new migration script following model changes
+alembic revision --autogenerate -m "add_laboratory_and_qco_tables"
+
+# Apply pending migrations to the latest revision
+alembic upgrade head
+
+# Rollback the last applied migration
+alembic downgrade -1
+
+# Inspect current database revision status
+alembic current
+```
+
+---
+
+## 6. Data Ingestion Pipeline Architecture
+
+The data ingestion pipeline transforms unstructured government gazettes, watermarked preview records, and structured standards catalogs into queryable, verified relational knowledge:
+
+```mermaid
+flowchart LR
+    Portals["Official Portals (standards.bis.gov.in / egazette)"] --> Crawler["Source Discovery Engine"]
+    Crawler --> Downloader["PDF & HTML Scraper"]
+    Downloader --> Parser["PDF & Text Extraction Engine"]
+    Parser --> Normalizer["Metadata & Clause Normalizer"]
+    Normalizer --> Validator["Schema & Checksum Validation"]
+    Validator --> DB[("PostgreSQL / SQLite Database")]
+```
+
+### Pipeline Ingestion Stages
+
+1. **Source Discovery**: Monitors official BIS publications, line ministry notification boards, and the Gazette of India for newly released standards and QCOs.
+2. **Content Extraction**: Parses complex PDF layouts, isolating scopes, clause headings, normative references, tables, and annexures.
+3. **Metadata Normalization**: Standardizes dates to ISO-8601, resolves alphanumeric Indian Standard codes into canonical keys (`IS_{clean_id}`), and indexes committee codes.
+4. **Relational Persistence**: Stores documents in atomic relational tables with parent-child relationships linking standards to clauses, QCOs, and accredited laboratories.
+
+---
+
+## 7. Source Discovery & Government Portal Monitoring
+
+To maintain strict regulatory validity, the ingestion engine harvests exclusively from Tier-1 Government of India repositories:
+
+```mermaid
+graph TD
+    Monitor["Source Discovery Monitor"]
+    Monitor --> T1["standards.bis.gov.in - Standards Catalogue"]
+    Monitor --> T2["standardsbis.bsbedge.com - Preview Records"]
+    Monitor --> T3["egazette.gov.in - Central QCO Orders"]
+    Monitor --> T4["manakonline.in - Laboratory & License Records"]
+```
+
+### Monitored Repositories & Cadence
+
+| Source Domain | Resource Type | Polling Cadence | Extraction Target |
+| :--- | :--- | :--- | :--- |
+| **`standards.bis.gov.in`** | Standards Master Directory | Daily at 02:00 IST | New publications, revisions, reaffirmations |
+| **`egazette.gov.in`** | Central Ministry Gazette | Daily at 04:00 IST | S.O. notifications, QCO effective dates |
+| **`manakonline.in`** | Laboratory Recognition | Weekly | New lab accreditations, scope expansions |
+| **`standardsbis.bsbedge.com`** | Preview Portals | On-Demand | Watermarked previews and TOC metadata |
+
+---
+
+## 8. Web Scraping & Politeness Protocols
+
+The scraper is designed to interface with government servers with high resilience, respect for server load, and automated retry mechanisms:
+
+```mermaid
+flowchart TD
+    Req["Scrape Request"] --> RateLimiter["Politeness Controller: 1 req/sec"]
+    RateLimiter --> Session["HTTP Session with User-Agent & Headers"]
+    Session --> Fetch["Execute GET Request"]
+    Fetch --> Status{"Status Code"}
+    Status -->|200 OK| Parse["Parse HTML with BeautifulSoup / lxml"]
+    Status -->|429 / 503| Backoff["Exponential Backoff & Jitter"]
+    Backoff --> Session
+```
+
+### Politeness & Reliability Protocols
+
+- **Rate Limiting**: Hard-capped at **1 request per second** per host to prevent any denial of service or strain on public servers.
+- **Exponential Backoff**: Configured with automated retries (3 attempts) using randomized jitter (`delay = 2^attempt + random(0, 1)`).
+- **Session Headers**: Transmits transparent, descriptive user-agent headers identifying the research crawler.
+
+---
+
+## 9. PDF Processing & Clause Hierarchy Extraction
+
+Indian Standard PDFs feature multi-column layouts, mathematical notation, embedded tables, and watermarks that challenge traditional OCR tools:
+
+```mermaid
+flowchart LR
+    PDF["Standard PDF"] --> PyMuPDF["PyMuPDF / pdfplumber Text Extractor"]
+    PyMuPDF --> Cleaner["Watermark & Header/Footer Stripper"]
+    Cleaner --> TOC["Table of Contents & Clause Parser"]
+    TOC --> ChunkEngine["Clause-Aware Semantic Chunking"]
+    ChunkEngine --> DB[("Structured Storage")]
+```
+
+### Processing Steps
+
+1. **Artifact Cleaning**: Strips recurring headers, footers, pagination indicators, and diagonal watermarks (*"Preview Copy"*, *"Restricted Use"*).
+2. **Clause Hierarchy Extraction**: Implements recursive regular expression parsing to identify nested clauses:
+   - Root: `Clause 5 — Test Methods`
+   - Child: `Clause 5.2 — Mass and Dimensional Tolerances`
+   - Sub-child: `Clause 5.2.1 — Conditioning Procedure`
+3. **Table & Formula Extraction**: Converts standard tables (e.g. concrete grade compressive strengths in `IS 456`) into structured JSON key-value blocks.
+
+---
+
+## 10. Metadata Extraction & Normalization
+
+Raw text extracted from standards must be normalized into uniform relational attributes:
+
+```mermaid
+flowchart TD
+    Raw["Raw Document Text"] --> Extractor["Metadata Extraction Engine"]
+    Extractor --> IS_Num["Canonical IS Number: e.g. IS 138:2018"]
+    Extractor --> Title["Standard Title"]
+    Extractor --> Year["Publication Year & Reaffirmation Date"]
+    Extractor --> Dept["Division Council: CHD / CED / ETD"]
+    Extractor --> QCO_Data["Associated QCO Order Name & S.O. Number"]
+```
+
+### Canonical Normalization Rules
+
+- **Standard Code**: Strips superfluous whitespaces and punctuation. `IS-138-2018`, `IS138`, and `IS  138:2018` normalize to canonical key `IS 138:2018`.
+- **Date Formatting**: All dates are mapped to ISO-8601 (`YYYY-MM-DD`).
+- **Product Synonyms**: Automated generation of localized synonyms (e.g., mapping `IS 1786` to `saria`, `tmt`, `rebar`, `reinforcement steel`).
+
+---
+
+## 11. Data Validation & Integrity Verification
+
+Before any ingested record is committed to the relational database, it passes through an automated validation suite:
+
+```mermaid
+flowchart TD
+    Ingest["Candidate Document Data"] --> V1{"Schema Validation (Pydantic)"}
+    V1 -->|Pass| V2{"URL Live Check (BSB Edge)"}
+    V1 -->|Fail| Discard["Log Error & Discard"]
+    V2 -->|Pass| V3{"Mandatory QCO Cross-Ref"}
+    V2 -->|Fail| FallbackURL["Assign Canonical Fallback"]
+    V3 --> Commit[("Commit to PostgreSQL / SQLite")]
+```
+
+### Integrity Validation Rules
+
+1. **Pydantic Schema Enforcement**: Validates that all required fields (`standard_number`, `title`, `status`, `source_url`, `source_tier`) exist with non-null values.
+2. **Tier-1 Source Validation**: Rejects any record whose `source_url` does not match approved government domain prefixes (`https://standards.bis.gov.in`, `https://standardsbis.bsbedge.com`, `https://www.manakonline.in`).
+3. **Foreign Key Integrity**: Clauses and chunks must strictly link to existing, valid parent `standard_id` records.
+
+---
+
+## 12. State Management & Data Structures
+
+```typescript
+export interface IngestionPipelineState {
+  pipelineStatus: 'IDLE' | 'CRAWLING' | 'PARSING' | 'NORMALIZING' | 'COMMITTED';
+  standardsIngested: number;
+  clausesExtracted: number;
+  qcosLinked: number;
+  lastSyncTimestamp: string;
+  activeBatch: {
+    domain: 'CHD' | 'CED' | 'ETD' | 'MTD';
+    currentDocument: string;
+    parsingErrors: string[];
+  };
+}
+```
+
+---
+
+## 13. Key Interactions & Execution Walkthrough
+
+### Ingestion Trigger Execution
+```bash
+python -c "from backend.ingestion.pipeline import pipeline; pipeline.run_seed_ingestion()"
+```
+
+### Execution Log Trace
+```text
+[INFO] Starting BIS Authoritative Seed Ingestion Pipeline
+[INFO] Ingesting IS 4151:2020: Protective Helmets for Two Wheeler Riders
+[INFO] Parsed 28 Clauses, 4 Tables, 1 QCO Order (MoRTH Gazette S.O. 4250(E))
+[INFO] Embedded 28 chunks using all-MiniLM-L6-v2 (384 dimensions)
+[INFO] Ingestion committed successfully to SQLite/PostgreSQL
+```
+

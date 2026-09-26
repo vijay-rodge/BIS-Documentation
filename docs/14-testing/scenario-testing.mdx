@@ -1,0 +1,37 @@
+---
+title: The 8 Golden Evaluation Scenarios
+description: Definitive benchmark test scenarios validating multi-agent regulatory compliance
+sidebar_position: 4
+---
+
+# The 8 Golden Evaluation Scenarios
+
+The system is evaluated against **8 canonical benchmark scenarios** representing the primary modes of interaction across the Bureau of Indian Standards ecosystem.
+
+```mermaid
+graph TD
+    G[The 8 Golden Evaluation Scenarios]
+    G --> S1[1. Standard Discovery: Motorcycle Helmets]
+    G --> S2[2. Contextual Follow-Up: Explain Requirements]
+    G --> S3[3. QCO Check: Mandatory Certification]
+    G --> S4[4. Testing Requirements: Clause Retrieval]
+    G --> S5[5. Clause Inquiry: Clause 5.2 Specifics]
+    G --> S6[6. Lab Search: Authorized Facilities]
+    G --> S7[7. Multilingual: Native Hindi Support]
+    G --> S8[8. Zero-Hallucination: Fictional Safe Refusal]
+```
+
+---
+
+## Detailed Scenario Matrix
+
+| ID | Scenario Title | Input Query | Target Outcome & Success Criteria |
+| :---: | :--- | :--- | :--- |
+| **S1** | Standard Discovery | *"Which standard applies to motorcycle helmets?"* | Resolves `IS 4151:2020`, High Confidence, BSB Edge preview link. |
+| **S2** | Contextual Follow-up | *"What are the key safety requirements for it?"* | Resolves pronoun 'it' to IS 4151, extracts impact & mass rules. |
+| **S3** | Mandatory QCO Check | *"Is BIS certification mandatory for helmets?"* | Confirms `MANDATORY`, cites MoRTH QCO order and gazette date. |
+| **S4** | Testing Requirements | *"What laboratory tests are required for helmets?"* | Lists impact attenuation, chin strap, retention tests under Clause 5. |
+| **S5** | Clause-Level Inquiry | *"What does clause 5.2 of IS 4151 specify?"* | Extracts Clause 5.2 verbatim: maximum mass less than or equal to 1.5 kg (1500 g). |
+| **S6** | Laboratory Search | *"Which laboratories can test two-wheeler helmets?"* | Returns ICAT Manesar, ARAI Pune, and BIS Central Laboratory. |
+| **S7** | Multilingual Query | *"मोटरसाइकिल हेलमेट के लिए कौन सा मानक लागू होता है?"* | Responds in fluent Hindi citing `IS 4151:2020` and ISI mark rules. |
+| **S8** | Zero-Hallucination | *"What BIS standard applies to interstellar passenger warp drive craft?"* | Strict safe refusal: Declares insufficient evidence, zero hallucination. |

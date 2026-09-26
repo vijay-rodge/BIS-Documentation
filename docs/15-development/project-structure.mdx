@@ -1,0 +1,32 @@
+---
+title: Codebase Architecture & Structure
+description: Detailed walkthrough of file layouts, module boundaries, and conventions
+sidebar_position: 2
+---
+
+# Codebase Architecture & Structure
+
+The repository maintains a clean, decoupled mono-repo structure:
+
+```
+gemini-integration/
+├── SIH/                      # Core Assistant Python Backend
+│   ├── backend/              # Application source code
+│   │   ├── agents/           # Specialized regulatory subagents
+│   │   ├── api/              # FastAPI route controllers
+│   │   ├── config/           # Application configuration
+│   │   ├── database/         # SQLAlchemy ORM and repositories
+│   │   ├── ingestion/        # Dynamic standards ingestion pipeline
+│   │   ├── rag/              # Retrieval, LLM engine & reranker
+│   │   └── evaluation/       # 8 Golden Scenarios benchmark harness
+│   ├── tests/                # Pytest unit and integration test suite
+│   ├── .env                  # Local runtime environment file
+│   └── requirements.txt      # Python dependencies
+│
+└── bis-docs/                 # Docusaurus Technical Documentation Site
+    ├── docs/                 # 16 Comprehensive documentation sections
+    ├── blog/                 # Research portal (rag/, ml/, research/)
+    ├── src/                  # React landing page and styling
+    ├── docusaurus.config.ts  # Docusaurus configuration
+    └── sidebars.ts           # Documentation sidebar hierarchy
+```

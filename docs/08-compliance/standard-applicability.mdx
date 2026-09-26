@@ -1,0 +1,27 @@
+---
+title: Standard Applicability & Product Mapping
+description: Algorithms for mapping complex product variants to specific Indian Standards
+sidebar_position: 2
+---
+
+# Standard Applicability & Product Mapping
+
+Products often cross multiple materials, voltage classes, or pressure ratings, each governed by different Indian Standards.
+
+```mermaid
+flowchart TD
+    P[Product: Electrical Water Heater] --> CheckVoltage{Power / Capacity Type}
+    CheckVoltage -->|Storage Geyser Domestic| IS302_2_21[IS 302-2-21:2018 - Stationary Storage Geyser]
+    CheckVoltage -->|Instantaneous Heater| IS302_2_35[IS 302-2-35 - Instantaneous Water Heater]
+    CheckVoltage -->|Solar Water Heater| IS12933[IS 12933 - Solar Flat Plate Collector System]
+```
+
+---
+
+## Resolution Algorithms
+
+The `ProductAgent` uses a priority hierarchy:
+1. **Explicit IS Lookup**: Regex matches in the query take highest precedence.
+2. **Product Mapping Dictionary**: Maps direct colloquial terms (`geyser`, `saria`, `marking paint`).
+3. **Dynamic Catalog Expansion**: Evaluates product synonyms across `EXPANDED_STANDARDS_CATALOGUE`.
+4. **Agent Clarification**: If a product has multiple distinct standards, flags disambiguation options to prompt user selection.

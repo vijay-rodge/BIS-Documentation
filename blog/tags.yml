@@ -1,0 +1,14 @@
+research:
+  label: Research
+  permalink: /research
+  description: Research papers, experimental benchmarks, and empirical evaluations
+
+architecture:
+  label: Architecture
+  permalink: /architecture
+  description: System architecture, agent frameworks, and integration designs
+
+standards:
+  label: Standards
+  permalink: /standards
+  description: Bureau of Indian Standards and compliance specifications

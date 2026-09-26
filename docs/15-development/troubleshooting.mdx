@@ -1,0 +1,47 @@
+---
+title: Development Troubleshooting
+description: Diagnosing and resolving common runtime errors, rate limits, and database locks
+sidebar_position: 5
+---
+
+# Development Troubleshooting Guide
+
+This guide addresses common development environment errors and their verified resolutions.
+
+---
+
+## 1. Gemini API Rate Limits (`HTTP 429 You exceeded your quota`)
+
+### Symptom
+Console logs show: `WARNING:bis_agent.llm_engine:Gemini generation failed: 429 You exceeded your current quota`.
+
+### Resolution
+- **Expected Behavior**: The system's circuit-breaker automatically routes synthesis to the **local extractive reasoning engine**, generating Section-12 standard profiles without failing.
+- **To Re-enable Gemini**: Provide a valid paid-tier or fresh API key in `.env`:
+  ```bash
+  GEMINI_API_KEY="AIzaSy..."
+  ```
+
+---
+
+## 2. Unseeded Standard Returns "Insufficient Evidence"
+
+### Symptom
+Querying `IS 138` or `IS 456` initially returned safe refusal.
+
+### Resolution
+Ensure that `backend/ingestion/dynamic_pipeline.py` is invoked. The `DynamicBISPipeline` automatically intercepts any valid `IS \d+` pattern, synthesizes the standard profile, and persists it into your database.
+
+---
+
+## 3. SQLite Database Locked (`sqlite3.OperationalError: database is locked`)
+
+### Symptom
+Occurs when multiple concurrent threads attempt simultaneous writes on SQLite.
+
+### Resolution
+In your database connection configuration, increase the busy timeout:
+```python
+engine = create_engine("sqlite:///./bis_agent.db", connect_args={"timeout": 30})
+```
+For production concurrency, switch to PostgreSQL as described in the Database documentation.

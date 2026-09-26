@@ -1,0 +1,58 @@
+---
+title: Docker Containerization
+description: Multi-stage Dockerfiles for backend API and Docusaurus documentation
+sidebar_position: 2
+---
+
+# Docker Containerization
+
+Both the backend application and the Docusaurus documentation site are containerized using optimized multi-stage Docker builds.
+
+---
+
+## Backend Dockerfile (`SIH/Dockerfile`)
+
+```dockerfile
+# Stage 1: Build & Dependencies
+FROM python:3.11-slim AS builder
+
+WORKDIR /app
+RUN apt-get update && apt-get install -y --no-install-recommends build-essential && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir --user -r requirements.txt
+
+# Stage 2: Minimal Runtime
+FROM python:3.11-slim AS runner
+
+WORKDIR /app
+COPY --from=builder /root/.local /root/.local
+COPY . /app
+
+ENV PATH=/root/.local/bin:$PATH
+ENV PYTHONUNBUFFERED=1
+
+EXPOSE 8000
+CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "4"]
+```
+
+---
+
+## Documentation Site Dockerfile (`bis-docs/Dockerfile`)
+
+```dockerfile
+# Stage 1: Build Docusaurus
+FROM node:20-alpine AS build
+
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
+
+# Stage 2: Serve via NGINX
+FROM nginx:alpine AS runner
+COPY --from=build /app/build /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
+```

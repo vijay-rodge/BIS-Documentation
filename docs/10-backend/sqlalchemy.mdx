@@ -1,0 +1,32 @@
+---
+title: SQLAlchemy Integration & Session Lifecycle
+description: Database connection pooling, session lifecycle, and dependency injection
+sidebar_position: 5
+---
+
+# SQLAlchemy Integration & Session Lifecycle
+
+The backend manages database sessions via FastAPI's dependency injection system, ensuring connections are automatically acquired, committed, and closed.
+
+```python
+# backend/database/connection.py
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, Session
+from backend.config.settings import settings
+
+engine = create_engine(
+    settings.DATABASE_URL,
+    connect_args={"check_same_thread": False} if "sqlite" in settings.DATABASE_URL else {},
+    pool_pre_ping=True
+)
+
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+def get_db():
+    # FastAPI Dependency providing request-scoped database session
+    db: Session = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+```

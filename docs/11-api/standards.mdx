@@ -1,0 +1,33 @@
+---
+title: Standards API Endpoints
+description: Specifications, parameters, and responses for standards catalog endpoints
+sidebar_position: 2
+---
+
+# Standards API Endpoints
+
+### 1. Get Standard Details
+`GET /api/v1/standards/{standard_number}`
+
+#### Request Parameters
+- **`standard_number`** *(path, required)*: Canonical IS number (e.g., `IS 4151` or `IS 138:2018`).
+
+#### Example Response (`200 OK`)
+```json
+{
+  "id": 1,
+  "standard_number": "IS 4151:2020",
+  "title": "Protective Helmets for Two-Wheeler Riders — Specification",
+  "edition": "Fourth Revision",
+  "publication_year": 2020,
+  "status": "ACTIVE",
+  "department": "Transport Engineering Department (TED)",
+  "committee": "TED 22 - Transport Safety Equipment",
+  "preview_url": "https://standardsbis.bsbedge.com/BIS_Preview.aspx?id=IS_4151_2020",
+  "qco": {
+    "mandatory_status": "MANDATORY",
+    "title": "Two-Wheeler Helmets (Quality Control) Order",
+    "issuing_ministry": "Ministry of Road Transport and Highways"
+  }
+}
+```

@@ -1,0 +1,32 @@
+---
+title: REST API Overview
+description: API design conventions, endpoint catalog, versioning, and headers
+sidebar_position: 1
+---
+
+# REST API Overview
+
+The BIS Intelligent Assistant exposes an intuitive, versioned (`/api/v1`) RESTful API conforming to OpenAPI 3.1 specifications.
+
+```mermaid
+flowchart LR
+    Client[Client App] --> BaseURL[Base URL: /api/v1]
+    BaseURL --> Chat[/chat/completions]
+    BaseURL --> Standards[/standards]
+    BaseURL --> Labs[/laboratories]
+    BaseURL --> Search[/search/product]
+    BaseURL --> Health[/health]
+```
+
+---
+
+## Core Endpoint Directory
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `POST` | `/api/v1/chat/completions` | Primary conversational endpoint for multi-agent compliance queries. |
+| `GET` | `/api/v1/standards` | List standards with pagination, department, and status filters. |
+| `GET` | `/api/v1/standards/{is_number}` | Retrieve complete profile, clauses, and QCO status for a standard. |
+| `GET` | `/api/v1/laboratories/by-standard/{is_number}` | Find accredited laboratories testing a specific standard. |
+| `POST` | `/api/v1/search/product` | Map natural product keywords to matching standards. |
+| `GET` | `/api/v1/health` | Service liveness, database connectivity, and Gemini status check. |

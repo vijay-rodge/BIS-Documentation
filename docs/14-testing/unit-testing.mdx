@@ -1,0 +1,32 @@
+---
+title: Unit Testing
+description: Unit testing patterns for parsers, agents, database repos, and rerankers
+sidebar_position: 2
+---
+
+# Unit Testing Specifications
+
+Unit tests validate discrete algorithmic units in isolation using mock database sessions and synthetic query fixtures.
+
+```python
+# tests/unit/test_query_agent.py
+import pytest
+from backend.agents.query_agent import query_agent
+
+def test_explicit_is_number_extraction():
+    res = query_agent.analyze("What does clause 5.2 of IS 4151 require?")
+    assert res["standard_number"] == "IS 4151"
+    assert res["clause_number"] == "5.2"
+    assert res["intent"] == "CLAUSE_QUERY"
+    assert res["language"] == "en"
+
+def test_hindi_language_detection():
+    res = query_agent.analyze("क्या हेलमेट के लिए बीआईएस प्रमाणन अनिवार्य है?")
+    assert res["language"] == "hi"
+    assert res["intent"] == "MANDATORY_STATUS"
+
+def test_product_entity_extraction():
+    res = query_agent.analyze("Which standard applies to marking paint?")
+    assert res["product"] == "paint"
+    assert res["intent"] == "STANDARD_DISCOVERY"
+```

@@ -1,0 +1,29 @@
+---
+title: Coding Guidelines & Conventions
+description: Python PEP 8 standards, TypeScript linting, typing rules, and naming
+sidebar_position: 3
+---
+
+# Coding Guidelines & Standards
+
+To maintain government-grade code maintainability, all contributions must strictly adhere to these standards.
+
+---
+
+## Python Backend Standards
+
+1. **Strict Type Annotations**: All function signatures must include Python type hints (`typing.Optional`, `typing.List`, `typing.Dict`).
+2. **PEP 8 Compliance**: Enforced using `black` (line length 100) and `flake8`.
+3. **Docstring Convention**: Use Google-style docstrings explaining arguments, return values, and potential exceptions.
+4. **Preserve Documentation Integrity**: Never delete existing explanatory comments or docstrings during refactoring.
+
+```python
+# Good Example:
+def resolve_standard(self, standard_query: str) -> Optional[Dict[str, Any]]:
+    # Resolves an Indian Standard query against the active catalog.
+    # Args: standard_query (colloquial string or explicit IS identifier)
+    # Returns: Standard dictionary if resolved, or None.
+    if not standard_query:
+        return None
+    return self._lookup(standard_query)
+```

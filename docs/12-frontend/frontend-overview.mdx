@@ -1,0 +1,28 @@
+---
+title: Frontend Architecture Overview
+description: React client architecture, user interface design, and state management
+sidebar_position: 1
+---
+
+# Frontend Architecture Overview
+
+The user interface is an accessible, high-performance web client designed to render complex regulatory specifications with clarity and transparency.
+
+```mermaid
+flowchart TD
+    User --> UI[React UI Interface]
+    UI --> ChatBox[Conversational Chat Pane]
+    UI --> DisambigPills[Dynamic Action Buttons]
+    UI --> CitationModal[Authoritative Citation Inspector]
+    UI --> LangSwitch[Multilingual Language Switcher: EN / HI / MR]
+    ChatBox --> ClientState[Context State Store]
+    ClientState --> APIClient[Axios / Fetch API Client]
+```
+
+---
+
+## Design Principles
+
+1. **Information Scannability**: Responses are organized into clear Markdown sections (Answer, Standard Profile, QCO Requirement, Testing Clauses).
+2. **Interactive Clarification**: When queries are ambiguous, action button pills allow one-click disambiguation.
+3. **Transparent Authority**: Every citation badge displays its Government Source Tier (Tier-1 Official).

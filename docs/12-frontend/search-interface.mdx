@@ -1,0 +1,24 @@
+---
+title: Standards Search Interface
+description: Interactive catalog explorer, faceted filtering, and autocomplete
+sidebar_position: 4
+---
+
+# Standards Search Interface
+
+Alongside the conversational chat, the frontend provides an exploratory **Standards Search Directory** for browsing the Indian Standards catalog.
+
+```mermaid
+flowchart LR
+    SearchInput[Search: 'concrete'] --> Filters[Filters: CED / Active / Mandatory]
+    Filters --> ResultsTable[Search Results Table]
+    ResultsTable --> Item1[IS 456:2000 - Plain and Reinforced Concrete]
+    ResultsTable --> Item2[IS 1786:2008 - TMT Steel Rebars]
+```
+
+---
+
+## Filtering Capabilities
+- **Technical Division**: Filter by CHD (Chemical), CED (Civil), ETD (Electrical), etc.
+- **Regulatory Status**: Show only products covered by mandatory Quality Control Orders (QCOs).
+- **Publication Era**: Filter by recent revisions or reaffirmations.

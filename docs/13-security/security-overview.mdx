@@ -1,0 +1,39 @@
+---
+title: Security Architecture & Threat Model
+description: Defense-in-depth model, compliance guidelines, and threat landscape
+sidebar_position: 1
+---
+
+# Security Architecture & Threat Model
+
+The BIS Intelligent Assistant operates within a Government of India regulatory context where information integrity, source verifiability, and cyber defense are paramount.
+
+```mermaid
+flowchart TD
+    subgraph Perimeter Defense
+        WAF[Cloudflare / NGINX WAF] --> RateLimit[SlowAPI Rate Limiter]
+        RateLimit --> HTTPS[TLS 1.3 Strict HTTPS]
+    end
+
+    subgraph Application Security
+        HTTPS --> InputSanitizer[Input Sanitizer & Punctuation Filter]
+        InputSanitizer --> InjectionFilter[Prompt Injection & Jailbreak Detector]
+        InjectionFilter --> APIAuth[API Key & Bearer Token Validator]
+    end
+
+    subgraph LLM & Persistence Security
+        APIAuth --> LLMGuard[Grounded Output Constraint Guard]
+        LLMGuard --> DB[(Encrypted Database Storage)]
+    end
+```
+
+---
+
+## Threat Model & Attack Surface
+
+| Threat Vector | Potential Impact | Implemented Mitigation |
+| :--- | :--- | :--- |
+| **Prompt Injection / Jailbreak** | Manipulating assistant to bypass BIS rules or invent standards | System prompt isolation, zero-agency boundaries, strict regex validation |
+| **API Denial of Service (DoS)** | Exhausting Gemini API quotas and server compute | IP-based sliding window rate limiting (SlowAPI), circuit breaker failover |
+| **Data Exfiltration / Tampering** | Unauthorized modification of standards or lab scopes | Read-only portal ingestion, cryptographic checksums, DB role isolation |
+| **Information Hallucination** | Misleading manufacturers into regulatory non-compliance | Four-Tier authority scoring, mandatory citation verification, safe refusal gate |

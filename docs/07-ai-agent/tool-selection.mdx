@@ -1,0 +1,39 @@
+---
+title: Tool Selection & Subagent Dispatch
+description: Dynamic dispatch rules, parameter binding, and parallel agent execution
+sidebar_position: 4
+---
+
+# Tool Selection & Subagent Dispatch
+
+The `AgentOrchestrator` uses intent classification and extracted entity parameters to dynamically select and invoke domain subagents.
+
+```mermaid
+flowchart TD
+    Analysis[Query Analysis: Intent & Entities] --> Dispatcher{Dispatch Logic}
+    Dispatcher -->|Intent == CLAUSE_QUERY| ClauseBranch[StandardAgent + Repo.get_clause]
+    Dispatcher -->|Intent == STANDARD_DISCOVERY| DiscBranch[StandardAgent.discover_standards]
+    DiscBranch --> QCOCheck[MandatoryStatusAgent.check_status]
+    DiscBranch --> TestCheck[TestingAgent.get_test_requirements]
+    DiscBranch --> LabCheck[LaboratoryAgent.find_laboratories]
+    QCOCheck & TestCheck & LabCheck --> Aggregator[Evidence Aggregator & Response Synthesis]
+```
+
+---
+
+## Dispatch Decision Table
+
+```python
+# Simplified Orchestrator Dispatch Pattern
+if intent == "CLAUSE_QUERY":
+    return self.handle_clause_query(target_std, clause_number)
+
+elif intent in ["STANDARD_DISCOVERY", "MANDATORY_STATUS", "TEST_REQUIREMENTS"]:
+    standards = self.standard_agent.discover_standards(query, explicit_std, product_kw)
+    if standards:
+        target = standards[0]["standard_number"]
+        qco_data = self.mandatory_agent.check_status(target)
+        tests_data = self.testing_agent.get_test_requirements(target)
+        labs_data = self.lab_agent.find_laboratories(target)
+        return self.response_agent.generate_response(...)
+```

@@ -1,0 +1,36 @@
+---
+title: QCO Validation & Gazette Citation
+description: Gazette S.O. citation protocols, issuing ministries, and exemption rules
+sidebar_position: 4
+---
+
+# QCO Validation & Gazette Citation
+
+Every declaration of mandatory certification must be validated against official Gazette of India records.
+
+```mermaid
+flowchart LR
+    QCO_DB[(QCO Database)] --> Verify[Verification Engine]
+    Verify --> CheckMin[Validate Issuing Ministry]
+    Verify --> CheckSO[Validate S.O. Number]
+    Verify --> CheckExempt[Validate Export Exemptions]
+    Verify --> Output[Attach Gazette Citation Badge]
+```
+
+---
+
+## Statutory Gazette Data Structure
+
+```json
+{
+  "standard_number": "IS 1786:2008",
+  "product_name": "High Strength Deformed Steel Bars (TMT)",
+  "mandatory_status": "MANDATORY",
+  "qco_title": "Steel and Steel Products (Quality Control) Order",
+  "issuing_ministry": "Ministry of Steel",
+  "notification_number": "S.O. 4567(E)",
+  "order_date": "2020-12-18",
+  "effective_date": "2021-06-18",
+  "exemptions": "Products manufactured exclusively for export are exempt."
+}
+```
