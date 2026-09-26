@@ -12,6 +12,7 @@ const config: Config = {
 
   organizationName: 'bis-assistant',
   projectName: 'bis-intelligent-assistant',
+  trailingSlash: false,
 
   onBrokenLinks: 'throw',
 
@@ -137,7 +138,7 @@ const config: Config = {
             },
             {
               label: 'Core Architecture',
-              to: '/docs/architecture/architecture-overview',
+              to: '/docs/architecture/system-architecture',
             },
             {
               label: 'RAG Pipeline',
