@@ -99,7 +99,7 @@ const config: Config = {
           position: 'left',
         },
         {
-          href: 'https://github.com/vijay-rodge/BIS-Documentation',
+          href: 'https://github.com/bis-assistant/bis-intelligent-assistant',
           label: 'GitHub',
           position: 'right',
         },
@@ -163,7 +163,7 @@ const config: Config = {
             },
             {
               label: 'GitHub Repository',
-              href: 'https://github.com/vijay-rodge/BIS-Documentation',
+              href: 'https://github.com/bis-assistant/bis-intelligent-assistant',
             },
           ],
         },
