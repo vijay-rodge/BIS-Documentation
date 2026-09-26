@@ -7,11 +7,11 @@ const config: Config = {
   tagline: 'Authoritative Conversational AI for Indian Standards & BIS Compliance Services',
   favicon: 'img/favicon.ico',
 
-  url: 'https://bis-assistant.gov.in',
-  baseUrl: '/',
+  url: 'https://vijay-rodge.github.io',
+  baseUrl: '/BIS-Documentation/',
 
-  organizationName: 'bis-assistant',
-  projectName: 'bis-intelligent-assistant',
+  organizationName: 'vijay-rodge',
+  projectName: 'BIS-Documentation',
   trailingSlash: false,
 
   onBrokenLinks: 'throw',
@@ -99,7 +99,7 @@ const config: Config = {
           position: 'left',
         },
         {
-          href: 'https://github.com/bis-assistant/bis-intelligent-assistant',
+          href: 'https://github.com/vijay-rodge/BIS-Documentation',
           label: 'GitHub',
           position: 'right',
         },
@@ -163,7 +163,7 @@ const config: Config = {
             },
             {
               label: 'GitHub Repository',
-              href: 'https://github.com/bis-assistant/bis-intelligent-assistant',
+              href: 'https://github.com/vijay-rodge/BIS-Documentation',
             },
           ],
         },
