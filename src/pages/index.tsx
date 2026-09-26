@@ -11,20 +11,19 @@ function HomepageHeader() {
   return (
     <header className={clsx('hero hero--primary', styles.heroBanner)}>
       <div className="container">
-        <Heading as="h1" className={clsx('hero__title', styles.heroTitle)}>
+        <Heading as="h1" className="hero__title">
           {siteConfig.title}
         </Heading>
-        <p className={clsx('hero__subtitle', styles.heroSubtitle)}>
-          {siteConfig.tagline}
-        </p>
+        <p className="hero__subtitle">{siteConfig.tagline}</p>
         <div className={styles.buttons}>
           <Link
-            className={clsx('button button--secondary button--lg', styles.primaryButton)}
+            className="button button--secondary button--lg"
             to="/docs/introduction/overview">
             Explore System Documentation
           </Link>
           <Link
-            className={clsx('button button--outline button--lg', styles.secondaryButton)}
+            className="button button--outline button--secondary button--lg"
+            style={{marginLeft: '1rem', color: '#fff', borderColor: '#fff'}}
             to="/blog">
             Research & Benchmarks
           </Link>
@@ -70,7 +69,7 @@ function FeaturesSection() {
       <div className="container">
         <div className="row">
           {FeatureList.map((props, idx) => (
-            <div key={idx} className={clsx('col col--4', styles.cardContainer)}>
+            <div key={idx} className={clsx('col col--4')}>
               <div className="card padding--lg shadow--md" style={{height: '100%'}}>
                 <Heading as="h3">{props.title}</Heading>
                 <p>{props.description}</p>

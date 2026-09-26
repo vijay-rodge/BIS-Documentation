@@ -1,240 +1,30 @@
 /**
- * Global CSS for BIS Intelligent Assistant Documentation
- * Responsive Design, Dark/Light Themes, Mobile-First Adaptations
+ * Any CSS included here will be global. The classic template
+ * bundles Infima by default. Infima is a CSS framework designed to
+ * work well for content-centric websites.
  */
 
+/* You can override the default Infima variables here. */
 :root {
-  --ifm-color-primary: #1e5ba4;
-  --ifm-color-primary-dark: #1b5294;
-  --ifm-color-primary-darker: #194d8c;
-  --ifm-color-primary-darkest: #153f73;
-  --ifm-color-primary-light: #2164b4;
-  --ifm-color-primary-lighter: #2369bd;
-  --ifm-color-primary-lightest: #3479ce;
-  --ifm-code-font-size: 92%;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.08);
-  --ifm-container-width: 1280px;
+  --ifm-color-primary: #2e8555;
+  --ifm-color-primary-dark: #29784c;
+  --ifm-color-primary-darker: #277148;
+  --ifm-color-primary-darkest: #205d3b;
+  --ifm-color-primary-light: #33925d;
+  --ifm-color-primary-lighter: #359962;
+  --ifm-color-primary-lightest: #3cad6e;
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
 }
 
+/* For readability concerns, you should choose a lighter palette in dark mode. */
 [data-theme='dark'] {
-  --ifm-color-primary: #4da3ff;
-  --ifm-color-primary-dark: #3394ff;
-  --ifm-color-primary-darker: #268cff;
-  --ifm-color-primary-darkest: #0073fa;
-  --ifm-color-primary-light: #66b2ff;
-  --ifm-color-primary-lighter: #73b9ff;
-  --ifm-color-primary-lightest: #99ceff;
-  --docusaurus-highlighted-code-line-bg: rgba(255, 255, 255, 0.1);
-}
-
-/* ==========================================================================
-   1. GLOBAL VIEWPORT & HORIZONTAL SCROLL DEFENSE
-   ========================================================================== */
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-}
-
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-/* ==========================================================================
-   2. RESPONSIVE TYPOGRAPHY & WORD-BREAKING
-   ========================================================================== */
-h1, h2, h3, h4, h5, h6 {
-  overflow-wrap: break-word;
-  word-wrap: break-word;
-}
-
-.markdown {
-  overflow-wrap: break-word;
-  word-wrap: break-word;
-}
-
-/* Ensure long standard numbers e.g. IS 4151:2020/AMD-1 wrap gracefully */
-code,
-.markdown code {
-  word-break: break-word;
-  overflow-wrap: anywhere;
-}
-
-/* ==========================================================================
-   3. RESPONSIVE TABLES (CRUCIAL FOR MOBILE / TABLET)
-   Markdown tables wrap inside touch-scrolling containers so they never
-   stretch or break the mobile viewport width.
-   ========================================================================== */
-.markdown table {
-  display: block;
-  width: 100%;
-  max-width: 100%;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  border-collapse: collapse;
-  margin-top: 1rem;
-  margin-bottom: 1.75rem;
-}
-
-.markdown table th,
-.markdown table td {
-  padding: 0.65rem 0.9rem;
-  min-width: 120px;
-  vertical-align: top;
-}
-
-@media (max-width: 768px) {
-  .markdown table {
-    font-size: 0.88rem;
-  }
-  .markdown table th,
-  .markdown table td {
-    padding: 0.5rem 0.65rem;
-    min-width: 100px;
-  }
-}
-
-/* ==========================================================================
-   4. RESPONSIVE MERMAID DIAGRAMS
-   Prevents wide generated SVGs from pushing mobile viewports.
-   ========================================================================== */
-.docusaurus-mermaid-container,
-div[class*='mermaid'] {
-  width: 100%;
-  max-width: 100%;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  display: flex;
-  justify-content: center;
-  margin: 1.5rem 0;
-  padding: 0.5rem 0;
-}
-
-.docusaurus-mermaid-container svg,
-div[class*='mermaid'] svg {
-  max-width: 100% !important;
-  height: auto !important;
-}
-
-@media (max-width: 768px) {
-  .docusaurus-mermaid-container,
-  div[class*='mermaid'] {
-    justify-content: flex-start;
-  }
-}
-
-/* ==========================================================================
-   5. CODE BLOCKS & PRE FORMATTING
-   ========================================================================== */
-pre,
-.prism-code {
-  max-width: 100%;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  border-radius: 8px;
-}
-
-@media (max-width: 768px) {
-  pre,
-  .prism-code {
-    font-size: 0.82rem;
-    padding: 0.75rem;
-  }
-}
-
-/* ==========================================================================
-   6. RESPONSIVE MEDIA (IMAGES, IFRAMES, VIDEOS)
-   ========================================================================== */
-img,
-video,
-iframe {
-  max-width: 100%;
-  height: auto;
-  border-radius: 6px;
-}
-
-/* ==========================================================================
-   7. NAVBAR & SEARCH RESPONSIVENESS
-   Ensures seamless navigation bar, search modal, and mobile drawer.
-   ========================================================================== */
-.navbar {
-  padding-left: 1rem;
-  padding-right: 1rem;
-}
-
-@media (max-width: 996px) {
-  .navbar__brand {
-    margin-right: 0.5rem;
-  }
-  .navbar__title {
-    font-size: 1rem;
-  }
-}
-
-@media (max-width: 576px) {
-  .navbar {
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
-  }
-  .navbar__title {
-    font-size: 0.88rem;
-    max-width: 160px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .navbar__logo {
-    height: 1.75rem;
-    margin-right: 0.4rem;
-  }
-}
-
-/* Search bar on small devices */
-@media (max-width: 996px) {
-  .navbar__search-input {
-    width: 140px;
-  }
-  .navbar__search-input:focus {
-    width: 190px;
-  }
-}
-
-@media (max-width: 576px) {
-  .navbar__search-input {
-    width: 110px;
-    font-size: 0.8rem;
-    padding: 0.25rem 0.5rem;
-  }
-}
-
-/* Mobile Sidebar Drawer */
-.navbar-sidebar {
-  max-width: 85vw;
-}
-
-.navbar-sidebar__brand {
-  padding: 1rem;
-}
-
-.navbar-sidebar__items {
-  padding: 0.5rem;
-}
-
-/* ==========================================================================
-   8. FOOTER RESPONSIVENESS
-   ========================================================================== */
-@media (max-width: 768px) {
-  .footer {
-    padding: 2rem 1rem;
-  }
-  .footer__links {
-    margin-bottom: 1.5rem;
-  }
-  .footer__col {
-    margin-bottom: 1.5rem;
-  }
+  --ifm-color-primary: #25c2a0;
+  --ifm-color-primary-dark: #21af90;
+  --ifm-color-primary-darker: #1fa588;
+  --ifm-color-primary-darkest: #1a8870;
+  --ifm-color-primary-light: #29d5b0;
+  --ifm-color-primary-lighter: #32d8b4;
+  --ifm-color-primary-lightest: #4fddbf;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }
