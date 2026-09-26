@@ -1,30 +1,364 @@
 /**
- * Any CSS included here will be global. The classic template
- * bundles Infima by default. Infima is a CSS framework designed to
- * work well for content-centric websites.
+ * Global CSS for BIS Intelligent Assistant Documentation
+ * Complete Multi-Device Responsive System (Phones, Tablets, Desktops)
  */
 
-/* You can override the default Infima variables here. */
 :root {
-  --ifm-color-primary: #2e8555;
-  --ifm-color-primary-dark: #29784c;
-  --ifm-color-primary-darker: #277148;
-  --ifm-color-primary-darkest: #205d3b;
-  --ifm-color-primary-light: #33925d;
-  --ifm-color-primary-lighter: #359962;
-  --ifm-color-primary-lightest: #3cad6e;
-  --ifm-code-font-size: 95%;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+  --ifm-color-primary: #1e5ba4;
+  --ifm-color-primary-dark: #1b5294;
+  --ifm-color-primary-darker: #194d8c;
+  --ifm-color-primary-darkest: #153f73;
+  --ifm-color-primary-light: #2164b4;
+  --ifm-color-primary-lighter: #2369bd;
+  --ifm-color-primary-lightest: #3479ce;
+  --ifm-code-font-size: 92%;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.08);
+  --ifm-container-width: 1280px;
 }
 
-/* For readability concerns, you should choose a lighter palette in dark mode. */
 [data-theme='dark'] {
-  --ifm-color-primary: #25c2a0;
-  --ifm-color-primary-dark: #21af90;
-  --ifm-color-primary-darker: #1fa588;
-  --ifm-color-primary-darkest: #1a8870;
-  --ifm-color-primary-light: #29d5b0;
-  --ifm-color-primary-lighter: #32d8b4;
-  --ifm-color-primary-lightest: #4fddbf;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+  --ifm-color-primary: #4da3ff;
+  --ifm-color-primary-dark: #3394ff;
+  --ifm-color-primary-darker: #268cff;
+  --ifm-color-primary-darkest: #0073fa;
+  --ifm-color-primary-light: #66b2ff;
+  --ifm-color-primary-lighter: #73b9ff;
+  --ifm-color-primary-lightest: #99ceff;
+  --docusaurus-highlighted-code-line-bg: rgba(255, 255, 255, 0.1);
+}
+
+/* ==========================================================================
+   1. GLOBAL ZERO-OVERFLOW DEFENSE FOR ALL DEVICES
+   Eliminates horizontal wobble and prevents blocks from leaking out of screen.
+   ========================================================================== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden !important;
+  margin: 0;
+  padding: 0;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  position: relative;
+}
+
+#__docusaurus,
+.main-wrapper,
+main {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  min-width: 0;
+}
+
+/* Fix Flexbox min-width: auto bug where containers refuse to shrink */
+.container,
+.row,
+.col,
+article,
+.theme-doc-markdown,
+[class*='docItemContainer'],
+[class*='docItemCol'] {
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
+@media (max-width: 768px) {
+  /* Prevent Infima negative margin row bugs on mobile */
+  .row {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+  .container {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+}
+
+/* ==========================================================================
+   2. RESPONSIVE TYPOGRAPHY & WORD-BREAKING
+   ========================================================================== */
+h1, h2, h3, h4, h5, h6 {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: manual;
+}
+
+p, li, blockquote {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+.markdown {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+/* Ensure long Indian Standard codes e.g. IS 4151:2020/AMD-1 never force container width */
+code,
+.markdown code {
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+/* ==========================================================================
+   3. RESPONSIVE TABLES (ALL PAGES)
+   Ensures regulatory, schema, and benchmark tables scroll with touch.
+   ========================================================================== */
+.markdown table {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  margin-bottom: 1.75rem;
+}
+
+.markdown table th,
+.markdown table td {
+  padding: 0.65rem 0.9rem;
+  min-width: 120px;
+  vertical-align: top;
+}
+
+@media (max-width: 768px) {
+  .markdown table {
+    font-size: 0.88rem;
+  }
+  .markdown table th,
+  .markdown table td {
+    padding: 0.5rem 0.65rem;
+    min-width: 90px;
+  }
+}
+
+/* ==========================================================================
+   4. RESPONSIVE MERMAID DIAGRAMS & SVGS
+   ========================================================================== */
+.docusaurus-mermaid-container,
+div[class*='mermaid'] {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  display: flex;
+  justify-content: center;
+  margin: 1.5rem 0;
+  padding: 0.5rem 0;
+}
+
+.docusaurus-mermaid-container svg,
+div[class*='mermaid'] svg {
+  max-width: 100% !important;
+  height: auto !important;
+}
+
+@media (max-width: 768px) {
+  .docusaurus-mermaid-container,
+  div[class*='mermaid'] {
+    justify-content: flex-start;
+  }
+}
+
+/* ==========================================================================
+   5. CODE BLOCKS & PRE FORMATTING
+   ========================================================================== */
+pre,
+.prism-code {
+  max-width: 100% !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  border-radius: 8px;
+}
+
+@media (max-width: 768px) {
+  pre,
+  .prism-code {
+    font-size: 0.82rem;
+    padding: 0.75rem;
+  }
+}
+
+/* ==========================================================================
+   6. RESPONSIVE MEDIA (IMAGES, IFRAMES, VIDEOS)
+   ========================================================================== */
+img,
+video,
+iframe {
+  max-width: 100% !important;
+  height: auto !important;
+  border-radius: 6px;
+}
+
+/* ==========================================================================
+   7. NAVBAR & MOBILE ICON-ONLY SEARCH BAR
+   ========================================================================== */
+.navbar {
+  padding-left: 1rem;
+  padding-right: 1rem;
+  width: 100%;
+  max-width: 100vw;
+  box-sizing: border-box;
+}
+
+/* Permanently remove the Docusaurus mascot logo across all pages and viewports */
+.navbar__logo {
+  display: none !important;
+}
+
+@media (max-width: 996px) {
+  .navbar__brand {
+    margin-right: 0.5rem;
+    min-width: 0;
+    flex: 1 1 auto;
+    overflow: hidden;
+  }
+
+  .navbar__title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: calc(100vw - 120px);
+  }
+
+  .navbar__search {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-left: auto;
+    padding: 0;
+    flex-shrink: 0;
+  }
+
+  /* Unfocused search input: Show ONLY icon as a clean circular button */
+  .navbar__search-input:not(:focus) {
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+    max-width: 36px !important;
+    padding: 0 !important;
+    color: transparent !important;
+    background-color: var(--ifm-color-emphasis-100) !important;
+    border: 1px solid var(--ifm-color-emphasis-300) !important;
+    border-radius: 50% !important;
+    cursor: pointer;
+    box-shadow: none !important;
+    transition: width 0.25s ease, background-color 0.2s ease;
+  }
+
+  /* Hide placeholder text completely on mobile when not focused */
+  .navbar__search-input:not(:focus)::placeholder {
+    color: transparent !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+  }
+
+  /* Center the search icon SVG inside the 36px circle */
+  .navbar__search svg,
+  .navbar__search [class*='searchIcon'] {
+    position: absolute;
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    pointer-events: none;
+    z-index: 2;
+    width: 16px;
+    height: 16px;
+    color: var(--ifm-navbar-link-color, var(--ifm-font-color-base));
+    transition: left 0.25s ease, transform 0.25s ease;
+  }
+
+  /* Hide keyboard shortcut hint badge (Ctrl+K) on mobile */
+  .navbar__search kbd,
+  .navbar__search [class*='searchHint'],
+  .navbar__search [class*='searchHintContainer'] {
+    display: none !important;
+  }
+
+  /* When focused: expand smoothly to type search query */
+  .navbar__search-input:focus {
+    width: 220px !important;
+    max-width: calc(100vw - 110px) !important;
+    height: 36px !important;
+    border-radius: 18px !important;
+    padding-left: 2.1rem !important;
+    padding-right: 0.75rem !important;
+    color: var(--ifm-navbar-search-input-color, inherit) !important;
+    background-color: var(--ifm-navbar-search-input-background-color, #fff) !important;
+    border: 1.5px solid var(--ifm-color-primary) !important;
+    cursor: text;
+    z-index: 10;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  }
+
+  /* Shift icon to the left when input is focused */
+  .navbar__search-input:focus ~ svg,
+  .navbar__search:focus-within svg,
+  .navbar__search:focus-within [class*='searchIcon'] {
+    left: 11px !important;
+    transform: translateY(-50%) !important;
+  }
+
+  .navbar__search-input:focus::placeholder {
+    color: var(--ifm-color-emphasis-600) !important;
+    opacity: 0.8 !important;
+    visibility: visible !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .navbar {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+
+  .navbar__title {
+    font-size: 0.88rem;
+    max-width: calc(100vw - 80px);
+  }
+
+  .navbar__search-input:focus {
+    width: 180px !important;
+    max-width: calc(100vw - 90px) !important;
+  }
+}
+
+/* Mobile Sidebar Drawer */
+.navbar-sidebar {
+  max-width: 85vw;
+}
+
+.navbar-sidebar__brand {
+  padding: 1rem;
+}
+
+.navbar-sidebar__items {
+  padding: 0.5rem;
+}
+
+/* ==========================================================================
+   8. FOOTER RESPONSIVENESS
+   ========================================================================== */
+@media (max-width: 768px) {
+  .footer {
+    padding: 2rem 1rem;
+  }
+  .footer__links {
+    margin-bottom: 1.5rem;
+  }
+  .footer__col {
+    margin-bottom: 1.5rem;
+  }
 }

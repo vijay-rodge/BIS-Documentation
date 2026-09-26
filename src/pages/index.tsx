@@ -10,20 +10,19 @@ function HomepageHeader() {
   const {siteConfig} = useDocusaurusContext();
   return (
     <header className={clsx('hero hero--primary', styles.heroBanner)}>
-      <div className="container">
-        <Heading as="h1" className="hero__title">
+      <div className={styles.heroContent}>
+        <Heading as="h1" className={styles.heroTitle}>
           {siteConfig.title}
         </Heading>
-        <p className="hero__subtitle">{siteConfig.tagline}</p>
-        <div className={styles.buttons}>
+        <p className={styles.heroSubtitle}>{siteConfig.tagline}</p>
+        <div className={styles.buttonGroup}>
           <Link
-            className="button button--secondary button--lg"
+            className={clsx('button button--lg', styles.heroBtn, styles.primaryBtn)}
             to="/docs/introduction/overview">
             Explore System Documentation
           </Link>
           <Link
-            className="button button--outline button--secondary button--lg"
-            style={{marginLeft: '1rem', color: '#fff', borderColor: '#fff'}}
+            className={clsx('button button--lg', styles.heroBtn, styles.secondaryBtn)}
             to="/blog">
             Research & Benchmarks
           </Link>
@@ -65,18 +64,14 @@ const FeatureList = [
 
 function FeaturesSection() {
   return (
-    <section className="padding-vert--xl">
-      <div className="container">
-        <div className="row">
-          {FeatureList.map((props, idx) => (
-            <div key={idx} className={clsx('col col--4')}>
-              <div className="card padding--lg shadow--md" style={{height: '100%'}}>
-                <Heading as="h3">{props.title}</Heading>
-                <p>{props.description}</p>
-              </div>
-            </div>
-          ))}
-        </div>
+    <section className={styles.featuresWrapper}>
+      <div className={styles.cardsGrid}>
+        {FeatureList.map((props, idx) => (
+          <div key={idx} className={styles.featureCard}>
+            <Heading as="h3">{props.title}</Heading>
+            <p>{props.description}</p>
+          </div>
+        ))}
       </div>
     </section>
   );
