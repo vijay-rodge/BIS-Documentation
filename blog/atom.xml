@@ -8,12 +8,6 @@
     <subtitle>BIS Intelligent Assistant Blog</subtitle>
     <icon>https://vijay-rodge.github.io/BIS-Documentation/img/favicon.ico</icon>
     <entry>
-        <title type="html"><![CDATA[intent-classification-benchmarks]]></title>
-        <id>https://vijay-rodge.github.io/BIS-Documentation/blog/2026/09/26/ml/intent-classification-benchmarks</id>
-        <link href="https://vijay-rodge.github.io/BIS-Documentation/blog/2026/09/26/ml/intent-classification-benchmarks"/>
-        <updated>2026-09-26T00:00:00.000Z</updated>
-    </entry>
-    <entry>
         <title type="html"><![CDATA[live-benchmark-results]]></title>
         <id>https://vijay-rodge.github.io/BIS-Documentation/blog/2026/09/26/research/live-benchmark-results</id>
         <link href="https://vijay-rodge.github.io/BIS-Documentation/blog/2026/09/26/research/live-benchmark-results"/>
@@ -76,5 +70,11 @@
         <category label="Research" term="Research"/>
         <category label="Architecture" term="Architecture"/>
         <category label="Standards" term="Standards"/>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[intent-classification-benchmarks]]></title>
+        <id>https://vijay-rodge.github.io/BIS-Documentation/blog/2026/09/26/ml/intent-classification-benchmarks</id>
+        <link href="https://vijay-rodge.github.io/BIS-Documentation/blog/2026/09/26/ml/intent-classification-benchmarks"/>
+        <updated>2026-09-26T00:00:00.000Z</updated>
     </entry>
 </feed>

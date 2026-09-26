@@ -9,12 +9,6 @@
         <generator>https://github.com/jpmonette/feed</generator>
         <language>en</language>
         <item>
-            <title><![CDATA[intent-classification-benchmarks]]></title>
-            <link>https://vijay-rodge.github.io/BIS-Documentation/blog/2026/09/26/ml/intent-classification-benchmarks</link>
-            <guid>https://vijay-rodge.github.io/BIS-Documentation/blog/2026/09/26/ml/intent-classification-benchmarks</guid>
-            <pubDate>Sat, 26 Sep 2026 00:00:00 GMT</pubDate>
-        </item>
-        <item>
             <title><![CDATA[live-benchmark-results]]></title>
             <link>https://vijay-rodge.github.io/BIS-Documentation/blog/2026/09/26/research/live-benchmark-results</link>
             <guid>https://vijay-rodge.github.io/BIS-Documentation/blog/2026/09/26/research/live-benchmark-results</guid>
@@ -69,6 +63,12 @@
             <category>Research</category>
             <category>Architecture</category>
             <category>Standards</category>
+        </item>
+        <item>
+            <title><![CDATA[intent-classification-benchmarks]]></title>
+            <link>https://vijay-rodge.github.io/BIS-Documentation/blog/2026/09/26/ml/intent-classification-benchmarks</link>
+            <guid>https://vijay-rodge.github.io/BIS-Documentation/blog/2026/09/26/ml/intent-classification-benchmarks</guid>
+            <pubDate>Sat, 26 Sep 2026 00:00:00 GMT</pubDate>
         </item>
     </channel>
 </rss>
