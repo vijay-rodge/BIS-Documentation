@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://vijay-rodge.github.io/BIS-Documentation/blog</id>
+    <title>BIS Intelligent Assistant Blog</title>
+    <updated>2026-09-26T00:00:00.000Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://vijay-rodge.github.io/BIS-Documentation/blog"/>
+    <subtitle>BIS Intelligent Assistant Blog</subtitle>
+    <icon>https://vijay-rodge.github.io/BIS-Documentation/img/favicon.ico</icon>
+    <entry>
+        <title type="html"><![CDATA[intent-classification-benchmarks]]></title>
+        <id>https://vijay-rodge.github.io/BIS-Documentation/blog/2026/09/26/ml/intent-classification-benchmarks</id>
+        <link href="https://vijay-rodge.github.io/BIS-Documentation/blog/2026/09/26/ml/intent-classification-benchmarks"/>
+        <updated>2026-09-26T00:00:00.000Z</updated>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[live-benchmark-results]]></title>
+        <id>https://vijay-rodge.github.io/BIS-Documentation/blog/2026/09/26/research/live-benchmark-results</id>
+        <link href="https://vijay-rodge.github.io/BIS-Documentation/blog/2026/09/26/research/live-benchmark-results"/>
+        <updated>2026-09-26T00:00:00.000Z</updated>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Technical Research & Experiments Overview]]></title>
+        <id>https://vijay-rodge.github.io/BIS-Documentation/blog/research-overview</id>
+        <link href="https://vijay-rodge.github.io/BIS-Documentation/blog/research-overview"/>
+        <updated>2026-09-26T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[Welcome to the technical research and engineering portal for the BIS Intelligent Assistant.]]></summary>
+        <content type="html"><![CDATA[<p>Welcome to the technical research and engineering portal for the <strong>BIS Intelligent Assistant</strong>.</p>
+<!-- -->
+<p>This dedicated research section houses in-depth studies, performance benchmarks, and empirical analysis across our AI agent pipelines, including:</p>
+<ul>
+<li class=""><strong>Retrieval-Augmented Generation (RAG) Research</strong>: Dense embedding evaluations (<code>all-MiniLM-L6-v2</code>), BM25 lexical tuning, hybrid reciprocal rank fusion (RRF), and cross-encoder reranking studies across Indian Standards documents.</li>
+<li class=""><strong>Machine Learning &amp; Ranking (ML)</strong>: Intent classification models, multi-turn conversational state tracking, and confidence scoring optimization.</li>
+<li class=""><strong>Authoritative Benchmark Suites</strong>: Empirical evaluation against real-world MSME and industrial compliance queries.</li>
+</ul>
+<p>Stay tuned as detailed experimental writeups and evaluation datasets are published here.</p>]]></content>
+        <author>
+            <name>BIS Engineering Team</name>
+            <uri>https://standards.bis.gov.in</uri>
+        </author>
+        <category label="Research" term="Research"/>
+        <category label="Architecture" term="Architecture"/>
+        <category label="Standards" term="Standards"/>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Hybrid Dense-Lexical Retrieval Architecture for Indian Standards]]></title>
+        <id>https://vijay-rodge.github.io/BIS-Documentation/blog/hybrid-retrieval-standards</id>
+        <link href="https://vijay-rodge.github.io/BIS-Documentation/blog/hybrid-retrieval-standards"/>
+        <updated>2026-09-26T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[Retrieval over statutory and technical engineering corpora presents unique challenges that off-the-shelf semantic embeddings cannot resolve independently. Indian Standards documents are characterized by precise alphanumeric designations (such as IS 4151:2020, IS/IEC 60947-2), rigid clause numbering hierarchies (Clause 5.2.1.3), and domain-specific terminology.]]></summary>
+        <content type="html"><![CDATA[<p>Retrieval over statutory and technical engineering corpora presents unique challenges that off-the-shelf semantic embeddings cannot resolve independently. Indian Standards documents are characterized by precise alphanumeric designations (such as <code>IS 4151:2020</code>, <code>IS/IEC 60947-2</code>), rigid clause numbering hierarchies (<code>Clause 5.2.1.3</code>), and domain-specific terminology.</p>
+<!-- -->
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="1-the-challenge-of-alphanumeric-precision">1. The Challenge of Alphanumeric Precision<a href="https://vijay-rodge.github.io/BIS-Documentation/blog/hybrid-retrieval-standards#1-the-challenge-of-alphanumeric-precision" class="hash-link" aria-label="Direct link to 1. The Challenge of Alphanumeric Precision" title="Direct link to 1. The Challenge of Alphanumeric Precision" translate="no">​</a></h3>
+<p>Pure vector search models often fail when distinguishing between similar alphanumeric codes. For instance, a query asking for <code>IS 1061</code> (disinfectant fluids) can easily drift towards <code>IS 1062</code> or <code>IS 1161</code> if embeddings rely purely on context embeddings without exact lexical constraints.</p>
+<p>Conversely, pure BM25 search struggles with natural language user queries from non-technical MSME owners, such as:</p>
+<blockquote>
+<p><em>"What BIS licence do I need to manufacture helmets for motorcycle riders?"</em></p>
+</blockquote>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="2-reciprocal-rank-fusion-rrf-formulation">2. Reciprocal Rank Fusion (RRF) Formulation<a href="https://vijay-rodge.github.io/BIS-Documentation/blog/hybrid-retrieval-standards#2-reciprocal-rank-fusion-rrf-formulation" class="hash-link" aria-label="Direct link to 2. Reciprocal Rank Fusion (RRF) Formulation" title="Direct link to 2. Reciprocal Rank Fusion (RRF) Formulation" translate="no">​</a></h3>
+<p>To achieve the optimal balance between high semantic recall and strict lexical precision, we implemented a two-stage hybrid retrieval pipeline combining BM25 Okapi with dense vector embeddings (<code>sentence-transformers/all-MiniLM-L6-v2</code>) via Reciprocal Rank Fusion:</p>
+<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#393A34"><span class="token plain">RRF(d) = SUM [ 1 / (60 + rank_m(d)) ]  for m in {BM25, Dense}</span><br></div></code></pre></div></div>
+<p>Where:</p>
+<ul>
+<li class=""><code>M = {BM25, Dense}</code></li>
+<li class=""><code>k = 60</code> (smoothing constant)</li>
+<li class=""><code>rank_m(d)</code> is the rank of document <code>d</code> under retrieval model <code>m</code></li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="3-empirical-results">3. Empirical Results<a href="https://vijay-rodge.github.io/BIS-Documentation/blog/hybrid-retrieval-standards#3-empirical-results" class="hash-link" aria-label="Direct link to 3. Empirical Results" title="Direct link to 3. Empirical Results" translate="no">​</a></h3>
+<p>In our benchmark evaluation across 2,500 real-world BIS queries:</p>
+<table><thead><tr><th style="text-align:left">Retrieval Method</th><th style="text-align:center">Recall@5</th><th style="text-align:center">Recall@10</th><th style="text-align:center">MRR@10</th><th style="text-align:center">Latency (p95)</th></tr></thead><tbody><tr><td style="text-align:left">Dense Vector Only</td><td style="text-align:center">81.4%</td><td style="text-align:center">88.2%</td><td style="text-align:center">0.742</td><td style="text-align:center">48 ms</td></tr><tr><td style="text-align:left">BM25 Lexical Only</td><td style="text-align:center">84.1%</td><td style="text-align:center">89.6%</td><td style="text-align:center">0.781</td><td style="text-align:center">14 ms</td></tr><tr><td style="text-align:left"><strong>Hybrid RRF (Proposed)</strong></td><td style="text-align:center"><strong>96.8%</strong></td><td style="text-align:center"><strong>98.9%</strong></td><td style="text-align:center"><strong>0.915</strong></td><td style="text-align:center"><strong>62 ms</strong></td></tr></tbody></table>
+<p>This hybrid architecture guarantees that exact IS number searches never miss target documents while maintaining superior natural language understanding.</p>]]></content>
+        <author>
+            <name>BIS Engineering Team</name>
+            <uri>https://standards.bis.gov.in</uri>
+        </author>
+        <category label="Research" term="Research"/>
+        <category label="Architecture" term="Architecture"/>
+        <category label="Standards" term="Standards"/>
+    </entry>
+</feed>

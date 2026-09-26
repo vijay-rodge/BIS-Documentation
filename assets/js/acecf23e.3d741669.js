@@ -1,0 +1,1 @@
+"use strict";(globalThis.webpackChunkbis_docs||=[]).push([[1903],{1912(o){o.exports=JSON.parse('{"blogBasePath":"/BIS-Documentation/blog","blogTitle":"Blog","authorsListPath":"/BIS-Documentation/blog/authors"}')}}]);

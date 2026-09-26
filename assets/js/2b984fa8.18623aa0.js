@@ -1,0 +1,1 @@
+"use strict";(globalThis.webpackChunkbis_docs||=[]).push([[9945],{36859(o){o.exports=JSON.parse('{"metadata":{"permalink":"/BIS-Documentation/blog","page":1,"postsPerPage":10,"totalPages":1,"totalCount":4,"blogDescription":"Blog","blogTitle":"Blog"}}')}}]);

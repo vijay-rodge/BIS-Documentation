@@ -1,0 +1,1 @@
+"use strict";(globalThis.webpackChunkbis_docs||=[]).push([[6445],{6445(s,e,c){c.d(e,{createInfoServices:()=>a.v});var a=c(54614);c(4954)}}]);
